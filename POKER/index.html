@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Poker — Contador de Fichas</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div id="app">
+
+  <!-- ══════════════════════ SETUP ══════════════════════ -->
+  <section id="setup-screen" class="screen active">
+    <div class="setup-wrap">
+      <div class="setup-header">
+        <div class="logo-suit">♠</div>
+        <h1>POKER</h1>
+        <p class="subtitle">Juega con cartas físicas · La web lleva el conteo</p>
+      </div>
+      <div class="setup-body">
+        <div class="setup-col">
+          <div class="setup-card">
+            <h2>Configuración</h2>
+            <label><span>Fichas iniciales por jugador</span>
+              <input type="number" id="initial-money" min="1" value="1000" step="10"></label>
+            <label><span>Apuesta obligatoria (ciega)</span>
+              <input type="number" id="blind-bet" min="1" value="10" step="1"></label>
+          </div>
+          <div class="setup-card">
+            <h2>Jugadores</h2>
+            <div id="players-list"></div>
+            <div class="add-player-row">
+              <input type="text" id="new-player-name" placeholder="Nombre del jugador" maxlength="20">
+              <button type="button" id="add-player-btn">+ Añadir</button>
+            </div>
+          </div>
+          <div id="setup-errors" class="error-msg" hidden></div>
+          <button type="button" id="start-game-btn" class="btn-primary">🃏 Empezar partida</button>
+        </div>
+        <div class="setup-col hands-col">
+          <div class="setup-card hands-card">
+            <h2>Combinaciones de Póker</h2>
+            <div class="hands-visual-list" id="setup-hands-list"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════ GAME ══════════════════════ -->
+  <section id="game-screen" class="screen">
+    <!-- Top bar -->
+    <div class="game-topbar">
+      <div class="topbar-left">
+        <div class="round-pill">
+          <span class="rdot" id="rdot-0"></span>
+          <span class="rdot" id="rdot-1"></span>
+          <span class="rdot" id="rdot-2"></span>
+          <span class="rdot" id="rdot-3"></span>
+          <span id="current-round-label" class="round-name">Apuesta inicial</span>
+        </div>
+      </div>
+      <div class="topbar-center"><span class="logo-tiny">♠ POKER</span></div>
+      <div class="topbar-right">
+        <button class="hands-toggle-btn" id="hands-toggle-btn" title="Ver combinaciones">📋 Manos</button>
+      </div>
+    </div>
+
+    <!-- Hands overlay -->
+    <div id="hands-overlay" class="hands-overlay" hidden>
+      <div class="hands-overlay-inner">
+        <div class="hands-overlay-header">
+          <h3>Combinaciones de Póker</h3>
+          <button id="hands-overlay-close" class="overlay-close-btn">✕</button>
+        </div>
+        <div class="hands-visual-list overlay-hands" id="game-hands-list"></div>
+      </div>
+    </div>
+
+    <!-- Table area -->
+    <div class="game-arena" id="game-arena">
+      <div class="poker-table-wrapper" id="poker-table-wrapper">
+        <div class="poker-table">
+          <div class="table-felt">
+            <div class="table-rail-inner"></div>
+            <div class="table-center-content">
+              <div class="pot-chips-wrap" id="pot-chips"></div>
+              <div class="pot-label-txt">BOTE</div>
+              <div id="pot-amount" class="pot-num">0</div>
+            </div>
+          </div>
+        </div>
+        <div id="players-seats"></div>
+      </div>
+    </div>
+
+    <!-- Bottom action bar -->
+    <div class="action-bar" id="action-bar">
+      <div class="action-bar-inner">
+        <div class="turn-who">
+          <span class="turn-label">Turno de</span>
+          <strong id="current-player-name" class="turn-name">—</strong>
+        </div>
+        <div id="action-buttons" class="action-btns">
+          <button type="button" id="btn-pass"  class="btn-action btn-pass">✋ Pasar</button>
+          <button type="button" id="btn-call"  class="btn-action btn-call" hidden>🟡 Igualar</button>
+          <button type="button" id="btn-raise" class="btn-action btn-raise">📈 Subir</button>
+          <button type="button" id="btn-fold"  class="btn-action btn-fold">❌ Retirarse</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Raise modal -->
+    <div id="raise-modal" class="modal" hidden>
+      <div class="modal-content">
+        <h3>¿Cuánto apuestas?</h3>
+        <p class="modal-hint" id="raise-hint">Apuesta total en esta ronda</p>
+        <input type="number" id="raise-amount" min="1" placeholder="Cantidad total">
+        <div class="quick-bets">
+          <button type="button" class="qb qb-sub" data-sub="1000">−1000</button>
+          <button type="button" class="qb qb-sub" data-sub="100">−100</button>
+          <button type="button" class="qb qb-sub" data-sub="10">−10</button>
+          <span class="qb-divider"></span>
+          <button type="button" class="qb" data-add="10">+10</button>
+          <button type="button" class="qb" data-add="100">+100</button>
+          <button type="button" class="qb" data-add="1000">+1000</button>
+          <button type="button" class="qb qb-allin" id="btn-allin">All In</button>
+        </div>
+        <div class="modal-actions">
+          <button type="button" id="raise-confirm" class="raise-confirm-btn">✅ Apostar</button>
+          <button type="button" id="raise-cancel"  class="raise-cancel-btn">Cancelar</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════ END ══════════════════════ -->
+  <section id="end-screen" class="screen">
+    <div class="end-wrap">
+      <div class="end-main">
+        <h1>🏆 Fin de la Mano</h1>
+        <div class="end-pot-box">
+          <div class="end-pot-chips" id="end-pot-chips"></div>
+          <div class="pot-label-txt">BOTE</div>
+          <div id="end-pot-amount" class="pot-num big">0</div>
+        </div>
+        <p id="end-winner-label" class="end-winner-label" hidden></p>
+        <div id="end-tie-section" class="end-tie-section" hidden></div>
+        <p class="who-won-lbl">¿Quién ha ganado?</p>
+        <div id="winner-buttons"></div>
+        <div class="end-actions">
+          <button type="button" id="add-player-between-btn" class="btn-secondary">+ Añadir jugador</button>
+          <button type="button" id="next-hand-btn" class="btn-primary" disabled>Siguiente mano →</button>
+        </div>
+      </div>
+      <div class="end-hands-col">
+        <div class="setup-card hands-card compact">
+          <h2>Combinaciones</h2>
+          <div class="hands-visual-list" id="end-hands-list"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Modal añadir jugador -->
+  <div id="add-player-modal" class="modal" hidden>
+    <div class="modal-content">
+      <h3>➕ Añadir jugador</h3>
+      <p class="modal-hint">Entrará en la siguiente mano con fichas iniciales.</p>
+      <input type="text" id="new-player-between-name" placeholder="Nombre" maxlength="20">
+      <div class="modal-actions">
+        <button type="button" id="add-player-between-confirm" class="raise-confirm-btn">Añadir</button>
+        <button type="button" id="add-player-between-cancel"  class="raise-cancel-btn">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal rejoin -->
+  <div id="rejoin-modal" class="modal" hidden>
+    <div class="modal-content">
+      <h3>💸 Sin fichas</h3>
+      <p id="rejoin-text"></p>
+      <div class="rejoin-actions">
+        <button type="button" id="rejoin-yes" class="btn-primary">Sí, volver a jugar</button>
+        <button type="button" id="rejoin-no"  class="raise-cancel-btn">No, eliminar</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+<script src="app.js"></script>
+</body>
+</html>
