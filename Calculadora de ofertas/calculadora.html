@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de ofertas y subidas de precio</title>
+    <script src="script.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>CALCULADORA</h1>
+    <div id="flex">
+        <br>
+        <div class="form">
+            <h2>Ofertas</h2>
+            <p>Precio: </p>
+            <input type="number" id="p_oferta" placeholder="0,00 €">
+            <p>Descuento</p>
+            <input type="number" id="descuento" placeholder="0 %">
+            <br><br>
+            <button onclick="limpiar();oferta()">CALCULAR</button>
+            <p id="r_oferta">El precio final es:</p>
+        </div>
+
+        <div class="form">
+            <h2>Subida de precio</h2>
+            <p>Precio: </p>
+            <input type="number" id="p_subida" placeholder="0,00 €">
+            <p>Porcentaje:</p>
+            <input type="number" id="subida" placeholder="0 %">
+            <br><br>
+            <button onclick="limpia2();subida()">CALCULAR</button>
+            <p id="r_subida">El precio final es:</p>
+        </div>
+    </div>
+</body>
+</html>
